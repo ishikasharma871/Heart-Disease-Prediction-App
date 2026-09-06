@@ -1,41 +1,57 @@
 # Heart Disease Prediction App
 
-An end-to-end machine learning project that predicts a patient's risk of heart disease based on clinical parameters, deployed as an interactive web application using **Streamlit**.
-
-
+An end-to-end machine learning project that predicts a patient's risk of heart disease based on clinical parameters, deployed as an interactive web application built with **Streamlit**.
 
 ---
 
-##  Overview
+##  Project Overview
 
-This project takes raw clinical data, cleans and analyzes it, engineers features using statistical tests, trains and compares multiple machine learning models, and deploys the best-performing model as a user-friendly web app that predicts heart disease risk in real time.
+Heart disease is one of the leading causes of death worldwide, and early risk assessment can make a real difference. This project walks through the complete machine learning lifecycle — from raw clinical data to a deployed, interactive prediction tool:
+
+1. **Explored and cleaned** a real-world clinical dataset of 918 patients.
+2. **Statistically validated** which features actually matter using Pearson correlation and Chi-Square tests, instead of guessing.
+3. **Trained and compared 5 classification models** to find the best performer.
+4. **Deployed the winning model** inside a clean, interactive Streamlit web app that anyone can use — no coding knowledge required.
+
+The result is a tool where a user enters basic health parameters (age, blood pressure, cholesterol, etc.) and instantly gets a **High Risk** or **Low Risk** prediction for heart disease.
 
 ---
 
 ## Dataset
 
-- **Source:** `heart.csv`
+- **File:** `heart.csv`
 - **Records:** 918 patients
-- **Features:** Age, Sex, Chest Pain Type, Resting Blood Pressure, Cholesterol, Fasting Blood Sugar, Resting ECG, Max Heart Rate, Exercise-Induced Angina, Oldpeak (ST Depression), ST Slope
-- **Target:** `HeartDisease` (1 = presence of heart disease, 0 = no heart disease)
+- **Original Features:** Age, Sex, Chest Pain Type, Resting Blood Pressure, Cholesterol, Fasting Blood Sugar, Resting ECG, Max Heart Rate, Exercise-Induced Angina, Oldpeak (ST Depression), ST Slope
+- **Target Variable:** `HeartDisease` (1 = heart disease present, 0 = no heart disease)
 
 ---
 
-##  Project Workflow
+##  What I Did — Step by Step
 
-1. **Data Cleaning**
-   - Handled invalid zero-values in `Cholesterol` and `RestingBP` by replacing them with the column mean.
-2. **Exploratory Data Analysis (EDA)**
-   - Distribution plots, count plots, and correlation analysis using Seaborn/Matplotlib.
-3. **Encoding**
-   - One-hot encoding of categorical variables using `pd.get_dummies()`.
-4. **Feature Selection**
-   - **Pearson correlation** for numerical/binary features.
-   - **Chi-Square test** for categorical features to statistically validate feature relevance before finalizing the feature set.
-5. **Model Training & Comparison**
-   - Trained and evaluated 5 classification models on an 67/33 train-test split with standardized features.
-6. **Model Deployment**
-   - Best model, scaler, and feature columns serialized using `joblib` and deployed via a Streamlit web app.
+### 1. Data Cleaning
+Some records had invalid `0` values in `Cholesterol` and `RestingBP` (which is physiologically impossible). These were replaced with the column mean rather than dropped, to preserve as much data as possible.
+
+### 2. Exploratory Data Analysis (EDA)
+Used Seaborn and Matplotlib to study the distribution of numerical features (Age, Cholesterol, MaxHR, RestingBP), check class balance in the target variable, and visualize relationships between features.
+
+### 3. Encoding
+Converted categorical columns (Sex, ChestPainType, RestingECG, ExerciseAngina, ST_Slope) into numerical form using one-hot encoding (`pd.get_dummies(drop_first=True)`), which avoids redundant columns and the dummy variable trap.
+
+### 4. Feature Selection (the part I'm proudest of)
+Rather than using all features blindly, I statistically tested each one:
+- **Pearson correlation** — measured how strongly numerical/binary features correlate with `HeartDisease`.
+- **Chi-Square test** — tested whether categorical features have a statistically significant relationship with the target (using a significance threshold of α = 0.05).
+
+Features that failed the significance test (like `ChestPainType_TA`) were dropped, leaving a final, statistically justified set of 14 features.
+
+### 5. Model Training & Comparison
+Split the data 67/33 (train/test), scaled the features using `StandardScaler`, and trained 5 different classification algorithms to compare their performance fairly.
+
+### 6. Model Selection & Saving
+Picked the best-performing model based on Accuracy and F1 Score, then saved the trained model, the scaler, and the exact feature column order using `joblib` — so the exact same preprocessing can be reproduced at prediction time.
+
+### 7. Deployment as a Web App
+Built an interactive **Streamlit** front-end where a user fills in patient details through sliders and dropdowns, and gets an instant, visually clear prediction — without ever touching the underlying code or notebook.
 
 ---
 
@@ -49,21 +65,19 @@ This project takes raw clinical data, cleans and analyzes it, engineers features
 | Decision Tree       | 0.7360   | 0.7561   |
 | **SVM (Selected)**  | **0.8647** | **0.8845** |
 
-The **Support Vector Machine (SVM)** model achieved the best accuracy and F1 score and was selected as the final production model.
+The **Support Vector Machine (SVM)** achieved the highest accuracy and F1 score and was selected as the final model powering the app.
 
 ---
 
-##  Web Application
+##  Application Screenshots
 
-The app is built with **Streamlit** and allows users to:
-- Enter patient health parameters through an interactive sidebar
-- View a summary of the entered details
-- Get an instant prediction — **High Risk** or **Low Risk** of heart disease
-- View the exact data sent to the model for transparency
+**Input form — entering patient details:**
 
-### Screenshot
+![App Screenshot - Input Form](screenshot-form.png)
 
-_(Add a screenshot of the app here — drag and drop an image into this README on GitHub, e.g. `![App Screenshot](screenshot.png)`)_
+**Prediction result — instant risk assessment:**
+
+![App Screenshot - Prediction Result](screenshot-result.png)
 
 ---
 
@@ -80,16 +94,18 @@ _(Add a screenshot of the app here — drag and drop an image into this README o
    pip install -r requirements.txt
    ```
 
-3. **Run the Streamlit app**
+3. **Run the app**
    ```bash
    streamlit run app.py
    ```
 
 4. Open the local URL shown in the terminal (usually `http://localhost:8501`) in your browser.
 
+>  A live hosted demo is not available yet — this project currently runs locally. (Coming soon!)
+
 ---
 
-## Tech Stack
+##  Tech Stack
 
 - **Language:** Python
 - **Data Analysis:** Pandas, NumPy
@@ -97,7 +113,7 @@ _(Add a screenshot of the app here — drag and drop an image into this README o
 - **Statistical Testing:** SciPy (Pearson correlation, Chi-Square test)
 - **Machine Learning:** Scikit-learn (Logistic Regression, KNN, Naive Bayes, Decision Tree, SVM)
 - **Model Persistence:** Joblib
-- **Web App / Deployment:** Streamlit
+- **Web App:** Streamlit
 
 ---
 
@@ -105,13 +121,15 @@ _(Add a screenshot of the app here — drag and drop an image into this README o
 
 ```
 Heart-Disease-Prediction-App/
-├── app.py                       # Streamlit web app
+├── app.py                       # Streamlit web application
 ├── EDA_1Heart_complete.ipynb    # Full EDA, feature selection & model training notebook
 ├── heart.csv                    # Dataset
 ├── SVM_heart.pkl                # Trained SVM model
 ├── scaler.pkl                   # StandardScaler used for feature scaling
 ├── columns.pkl                  # Feature column order expected by the model
 ├── requirements.txt             # Python dependencies
+├── screenshot-form.png          # App screenshot — input form
+├── screenshot-result.png        # App screenshot — prediction result
 └── README.md                    # Project documentation
 ```
 
@@ -119,16 +137,12 @@ Heart-Disease-Prediction-App/
 
 ##  Future Improvements
 
-- Enable `probability=True` in the SVM model to display prediction confidence scores in the app
-- Deploy the app publicly via Streamlit Community Cloud
-- Add model explainability (e.g., SHAP values) to show which features drove a given prediction
-- Experiment with hyperparameter tuning to improve the Decision Tree's performance
+- Enable `probability=True` in the SVM model to show prediction confidence percentages in the app
+- Deploy the app publicly via Streamlit Community Cloud for a live, shareable link
+- Add model explainability (e.g., SHAP values) to show which features most influenced a given prediction
+- Tune hyperparameters to improve the Decision Tree's comparatively weaker performance
 
 ---
 
-##  Author
-
-**Ishika Sharma**
-Aspiring Data Analyst | BCA Student
 
  If you found this project useful, consider giving it a star!
