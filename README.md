@@ -2,7 +2,7 @@
 
 An end-to-end machine learning project that predicts a patient's risk of heart disease based on clinical parameters, deployed as an interactive web application using **Streamlit**.
 
- **Live Demo:** _(add your deployed Streamlit Cloud link here once deployed)_
+
 
 ---
 
